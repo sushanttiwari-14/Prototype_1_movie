@@ -6,9 +6,56 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* SyncTableWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* SyncTableWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A10000000000000000000021 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E29972AC300B901D00A81C7F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A10000000000000000000031;
+			remoteInfo = SyncTableWidget;
+		};
+		A10000000000000000000022 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E29972AC300B901D00A81C7F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E29972B3300B901D00A81C7F;
+			remoteInfo = Prototype_1_movie;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A10000000000000000000041 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A10000000000000000000001 /* SyncTableWidget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		E29972B4300B901D00A81C7F /* Prototype_1_movie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prototype_1_movie.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000011 /* SyncTableWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SyncTableWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000012 /* Prototype_1_movieTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Prototype_1_movieTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A10000000000000000000053 /* Exceptions for "SyncTableWidget" folder in "SyncTableWidget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A10000000000000000000031 /* SyncTableWidget */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E29972B6300B901D00A81C7F /* Prototype_1_movie */ = {
@@ -16,10 +63,37 @@
 			path = Prototype_1_movie;
 			sourceTree = "<group>";
 		};
+		A10000000000000000000051 /* SyncTableWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				A10000000000000000000053 /* Exceptions for "SyncTableWidget" folder in "SyncTableWidget" target */,
+			);
+			path = SyncTableWidget;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000052 /* Prototype_1_movieTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Prototype_1_movieTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		E29972B1300B901D00A81C7F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000000000000000000061 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000000000000000000062 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +107,8 @@
 			isa = PBXGroup;
 			children = (
 				E29972B6300B901D00A81C7F /* Prototype_1_movie */,
+				A10000000000000000000051 /* SyncTableWidget */,
+				A10000000000000000000052 /* Prototype_1_movieTests */,
 				E29972B5300B901D00A81C7F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +117,8 @@
 			isa = PBXGroup;
 			children = (
 				E29972B4300B901D00A81C7F /* Prototype_1_movie.app */,
+				A10000000000000000000011 /* SyncTableWidget.appex */,
+				A10000000000000000000012 /* Prototype_1_movieTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,10 +133,12 @@
 				E29972B0300B901D00A81C7F /* Sources */,
 				E29972B1300B901D00A81C7F /* Frameworks */,
 				E29972B2300B901D00A81C7F /* Resources */,
+				A10000000000000000000041 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A10000000000000000000091 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				E29972B6300B901D00A81C7F /* Prototype_1_movie */,
@@ -69,6 +149,51 @@
 			productName = Prototype_1_movie;
 			productReference = E29972B4300B901D00A81C7F /* Prototype_1_movie.app */;
 			productType = "com.apple.product-type.application";
+		};
+		A10000000000000000000031 /* SyncTableWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A100000000000000000000A1 /* Build configuration list for PBXNativeTarget "SyncTableWidget" */;
+			buildPhases = (
+				A10000000000000000000071 /* Sources */,
+				A10000000000000000000061 /* Frameworks */,
+				A10000000000000000000081 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A10000000000000000000051 /* SyncTableWidget */,
+			);
+			name = SyncTableWidget;
+			packageProductDependencies = (
+			);
+			productName = SyncTableWidget;
+			productReference = A10000000000000000000011 /* SyncTableWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		A10000000000000000000032 /* Prototype_1_movieTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A100000000000000000000A2 /* Build configuration list for PBXNativeTarget "Prototype_1_movieTests" */;
+			buildPhases = (
+				A10000000000000000000072 /* Sources */,
+				A10000000000000000000062 /* Frameworks */,
+				A10000000000000000000082 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A10000000000000000000092 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A10000000000000000000052 /* Prototype_1_movieTests */,
+			);
+			name = Prototype_1_movieTests;
+			packageProductDependencies = (
+			);
+			productName = Prototype_1_movieTests;
+			productReference = A10000000000000000000012 /* Prototype_1_movieTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -82,6 +207,13 @@
 				TargetAttributes = {
 					E29972B3300B901D00A81C7F = {
 						CreatedOnToolsVersion = 26.0;
+					};
+					A10000000000000000000031 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					A10000000000000000000032 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = E29972B3300B901D00A81C7F;
 					};
 				};
 			};
@@ -100,12 +232,28 @@
 			projectRoot = "";
 			targets = (
 				E29972B3300B901D00A81C7F /* Prototype_1_movie */,
+				A10000000000000000000031 /* SyncTableWidget */,
+				A10000000000000000000032 /* Prototype_1_movieTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		E29972B2300B901D00A81C7F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000000000000000000081 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000000000000000000082 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -122,7 +270,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A10000000000000000000071 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000000000000000000072 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A10000000000000000000091 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A10000000000000000000031 /* SyncTableWidget */;
+			targetProxy = A10000000000000000000021 /* PBXContainerItemProxy */;
+		};
+		A10000000000000000000092 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E29972B3300B901D00A81C7F /* Prototype_1_movie */;
+			targetProxy = A10000000000000000000022 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E29972BD300B901E00A81C7F /* Debug */ = {
@@ -257,6 +432,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -289,6 +465,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -310,6 +487,104 @@
 			};
 			name = Release;
 		};
+		A100000000000000000000B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6J37W2X7S6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SyncTableWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "aniket.Prototype-1-movie.SyncTableWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A100000000000000000000B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6J37W2X7S6;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = SyncTableWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "aniket.Prototype-1-movie.SyncTableWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A100000000000000000000C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6J37W2X7S6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "aniket.Prototype-1-movieTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prototype_1_movie.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Prototype_1_movie";
+			};
+			name = Debug;
+		};
+		A100000000000000000000C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6J37W2X7S6;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "aniket.Prototype-1-movieTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Prototype_1_movie.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Prototype_1_movie";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -327,6 +602,24 @@
 			buildConfigurations = (
 				E29972C0300B901E00A81C7F /* Debug */,
 				E29972C1300B901E00A81C7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A100000000000000000000A1 /* Build configuration list for PBXNativeTarget "SyncTableWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A100000000000000000000B1 /* Debug */,
+				A100000000000000000000B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A100000000000000000000A2 /* Build configuration list for PBXNativeTarget "Prototype_1_movieTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A100000000000000000000C1 /* Debug */,
+				A100000000000000000000C2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
