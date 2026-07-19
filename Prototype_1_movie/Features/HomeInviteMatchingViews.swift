@@ -20,6 +20,7 @@ struct InviteView: View {
             .scrollIndicators(.hidden)
         }
         .toolbarBackground(.hidden, for: .navigationBar)
+        .syncMotion(value: store.bothConnected)
     }
 
     private var inviteHero: some View {
@@ -68,36 +69,12 @@ struct InviteView: View {
 
     private var participantsCard: some View {
         VStack(spacing: 22) {
-            HStack(alignment: .top, spacing: 0) {
-                inviteParticipant(
-                    store.localParticipant,
-                    connected: store.localConnected,
-                    local: true
-                )
-
-                ZStack {
-                    HStack(spacing: 4) {
-                        ForEach(0..<7, id: \.self) { _ in
-                            Capsule()
-                                .fill(SyncFlowPalette.rose.opacity(0.28))
-                                .frame(width: 7, height: 2)
-                        }
-                    }
-                    Image(systemName: "link")
-                        .font(.system(size: 19, weight: .semibold))
-                        .foregroundStyle(SyncFlowPalette.rose)
-                        .frame(width: 50, height: 50)
-                        .background(.white.opacity(0.9), in: Circle())
-                        .shadow(color: SyncFlowPalette.ink.opacity(0.06), radius: 10, y: 5)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 38)
-
-                inviteParticipant(
-                    store.remoteParticipant,
-                    connected: store.remoteConnected,
-                    local: false
-                )
+            if store.bothConnected {
+                connectedParticipants
+                    .transition(.scale(scale: 0.92).combined(with: .opacity))
+            } else {
+                pendingParticipants
+                    .transition(.opacity)
             }
 
             Divider().overlay(SyncFlowPalette.rose.opacity(0.09))
@@ -122,7 +99,58 @@ struct InviteView: View {
         .syncFlowCard(cornerRadius: 26, padding: 18)
     }
 
-    private func inviteParticipant(_ participant: Participant, connected: Bool, local: Bool) -> some View {
+    /// A table is only presented as populated after both ends have confirmed the invite.
+    /// This avoids implying that creating an invite has already connected someone.
+    private var pendingParticipants: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "link.badge.plus")
+                .font(.system(size: 30, weight: .semibold))
+                .foregroundStyle(SyncFlowPalette.rose)
+                .frame(width: 64, height: 64)
+                .background(SyncFlowPalette.blush.opacity(0.8), in: Circle())
+
+            Text("Waiting for someone to join")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(SyncFlowPalette.ink)
+            Text("Share the invite code to connect your table.")
+                .font(.system(size: 13))
+                .foregroundStyle(SyncFlowPalette.muted)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("No users are connected yet. Waiting for someone to join.")
+    }
+
+    private var connectedParticipants: some View {
+        HStack(alignment: .top, spacing: 0) {
+            inviteParticipant(store.localParticipant, local: true)
+
+            ZStack {
+                HStack(spacing: 4) {
+                    ForEach(0..<7, id: \.self) { _ in
+                        Capsule()
+                            .fill(SyncFlowPalette.success.opacity(0.4))
+                            .frame(width: 7, height: 2)
+                    }
+                }
+                Image(systemName: "checkmark")
+                    .font(.system(size: 19, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 50, height: 50)
+                    .background(SyncFlowPalette.success, in: Circle())
+                    .shadow(color: SyncFlowPalette.success.opacity(0.22), radius: 12, y: 5)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.top, 38)
+
+            inviteParticipant(store.remoteParticipant, local: false)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Sync complete. \(store.localParticipant.name) and \(store.remoteParticipant.name) are connected.")
+    }
+
+    private func inviteParticipant(_ participant: Participant, local: Bool) -> some View {
         VStack(spacing: 8) {
             ZStack(alignment: .bottomTrailing) {
                 Text(participant.initials)
@@ -140,7 +168,7 @@ struct InviteView: View {
                         in: Circle()
                     )
                 Circle()
-                    .fill(connected ? SyncFlowPalette.success : Color.orange)
+                    .fill(SyncFlowPalette.success)
                     .frame(width: 14, height: 14)
                     .overlay(Circle().stroke(.white, lineWidth: 3))
             }
@@ -153,17 +181,15 @@ struct InviteView: View {
                 .foregroundStyle(SyncFlowPalette.muted)
 
             HStack(spacing: 5) {
-                Text(connected ? "Connected" : "Waiting…")
-                if !connected {
-                    ProgressView().controlSize(.mini).tint(SyncFlowPalette.rose)
-                }
+                Image(systemName: "checkmark.circle.fill")
+                Text("Synced")
             }
             .font(.system(size: 11, weight: .bold))
-            .foregroundStyle(connected ? SyncFlowPalette.success : SyncFlowPalette.ink)
+            .foregroundStyle(SyncFlowPalette.success)
             .padding(.horizontal, 10)
             .padding(.vertical, 7)
             .background(
-                (connected ? SyncFlowPalette.success : Color.orange).opacity(0.09),
+                SyncFlowPalette.success.opacity(0.09),
                 in: RoundedRectangle(cornerRadius: 8)
             )
         }
@@ -185,23 +211,18 @@ struct InviteView: View {
                 HStack(spacing: 14) {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.title2)
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Your tablemate is here")
-                            .font(.system(size: 16, weight: .bold))
-                        Text("Find restaurants and menus together.")
-                            .font(.system(size: 13))
-                            .foregroundStyle(.white.opacity(0.82))
-                    }
+                    Text("Your tablemate is here")
+                        .font(.system(size: 16, weight: .bold))
                     Spacer()
                     Image(systemName: "arrow.right")
                 }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
             }
             .buttonStyle(SyncFlowPrimaryButtonStyle())
         } else {
             HStack(spacing: 15) {
-                ProgressView()
-                    .tint(SyncFlowPalette.rose)
-                    .controlSize(.large)
+                TablemateWaitingIndicator()
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Waiting for your tablemate…")
                         .font(.system(size: 15, weight: .bold))
@@ -287,7 +308,8 @@ struct MatchingView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .animation(.snappy, value: store.table.selectedPair?.id)
+        .syncMotion(value: store.table.selectedPair?.id)
+        .syncMotion(value: store.isMatching)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task {
             if store.matches.isEmpty {
@@ -297,46 +319,44 @@ struct MatchingView: View {
     }
 
     private var matchHero: some View {
-        GeometryReader { proxy in
-            let width = proxy.size.width
+        HStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Restaurant match".uppercased())
+                    .font(.system(size: 11.5, weight: .bold))
+                    .tracking(1.2)
+                    .foregroundStyle(SyncFlowPalette.rose)
 
-            ZStack(alignment: .topLeading) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Restaurant match".uppercased())
-                        .font(.system(size: 11.5, weight: .bold))
-                        .tracking(1.2)
-                        .foregroundStyle(SyncFlowPalette.rose)
-
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text(store.isMatching ? "Finding options" : "Great options")
-                        HStack(spacing: 6) {
-                            Text("for")
-                            Text("both").foregroundStyle(SyncFlowPalette.rose)
-                            Text("of you")
-                        }
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(store.isMatching ? "Finding options" : "Great options")
+                    HStack(spacing: 6) {
+                        Text("for")
+                        Text("both").foregroundStyle(SyncFlowPalette.rose)
+                        Text("of you")
                     }
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .foregroundStyle(SyncFlowPalette.ink)
-                    .tracking(-0.8)
-
-                    Text("Browse independently. Shared choices\nand carts update without moving the\nother person’s screen.")
-                        .font(.system(size: 13.5))
-                        .foregroundStyle(SyncFlowPalette.muted)
-                        .lineSpacing(5)
-                        .padding(.top, 5)
                 }
-                .frame(width: width * 0.68, alignment: .leading)
-                .zIndex(2)
+                .font(.system(size: 30, weight: .bold, design: .rounded))
+                .foregroundStyle(SyncFlowPalette.ink)
+                .tracking(-0.8)
+                .lineLimit(2)
+                .minimumScaleFactor(0.75)
 
-                Image("RestaurantMatchHero")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: width * 0.58)
-                    .offset(x: width * 0.48, y: 25)
-                    .accessibilityHidden(true)
+                Text("Browse independently. Shared choices and carts update without moving the other person’s screen.")
+                    .font(.system(size: 13.5))
+                    .foregroundStyle(SyncFlowPalette.muted)
+                    .lineSpacing(5)
+                    .padding(.top, 5)
+                    .fixedSize(horizontal: false, vertical: true)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .layoutPriority(1)
+
+            Image("RestaurantMatchHero")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 118)
+                .padding(.trailing, 4)
+                .accessibilityHidden(true)
         }
-        .frame(height: 225)
     }
 }
 struct MatchCard: View {

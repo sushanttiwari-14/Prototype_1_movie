@@ -70,6 +70,8 @@ struct TrackingView: View {
             }
             .padding(20)
         }
+        .syncMotion(value: store.table.orders)
+        .syncMotion(value: store.sharedMilestone)
     }
 
     private var honestStatus: String {
@@ -222,6 +224,9 @@ struct FirstBiteView: View {
         }
         .padding(24)
         .sensoryFeedback(.impact(weight: .heavy), trigger: store.countdown)
+        .syncMotion(value: store.countdown)
+        .syncMotion(value: store.hostReadyToEat)
+        .syncMotion(value: store.partnerReadyToEat)
     }
 
     private var firstBiteButtonTitle: String {
@@ -290,6 +295,7 @@ struct DiningView: View {
         }
         .padding(24)
         .sensoryFeedback(.selection, trigger: selectedReaction)
+        .syncMotion(SyncMotion.controlChange, value: selectedReaction)
     }
 }
 

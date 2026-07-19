@@ -36,6 +36,7 @@ struct ContentView: View {
                 }
                 .padding(.top, 8)
                 .allowsHitTesting(false)
+                .syncMotion(value: store.transientEvent?.id)
             }
             .toolbar {
                 #if DEBUG

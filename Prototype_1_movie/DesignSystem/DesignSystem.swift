@@ -1,5 +1,33 @@
 import SwiftUI
 
+/// Centralized motion keeps in-place updates consistent with the system's calm,
+/// interruptible animation language instead of giving each screen a different feel.
+enum SyncMotion {
+    static let stateChange = Animation.smooth(duration: 0.32, extraBounce: 0)
+    static let controlChange = Animation.smooth(duration: 0.22, extraBounce: 0)
+    static let press = Animation.smooth(duration: 0.16, extraBounce: 0)
+}
+
+/// Shared control dimensions. Prominent actions remain comfortably tappable
+/// without becoming card-sized, while icon-only controls keep a 44-point hit target.
+enum SyncButtonMetrics {
+    static let prominentHeight: CGFloat = 50
+    static let minimumHitTarget: CGFloat = 44
+    static let horizontalInset: CGFloat = 16
+    static let prominentCornerRadius: CGFloat = 14
+}
+
+private struct SyncMotionAnimation<Value: Equatable>: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    let animation: Animation
+    let value: Value
+
+    func body(content: Content) -> some View {
+        content.animation(reduceMotion ? nil : animation, value: value)
+    }
+}
+
 enum Brand {
     static let red = Color(red: 0.76, green: 0.05, blue: 0.12)
     static let redDark = Color(red: 0.48, green: 0.02, blue: 0.07)
@@ -24,11 +52,16 @@ struct PrimaryButtonStyle: ButtonStyle {
             .font(.headline)
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 52)
-            .padding(.horizontal)
-            .background(Brand.red.opacity(configuration.isPressed ? 0.75 : 1), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .frame(minHeight: SyncButtonMetrics.prominentHeight)
+            .padding(.horizontal, SyncButtonMetrics.horizontalInset)
+            .background(
+                Brand.red.opacity(configuration.isPressed ? 0.75 : 1),
+                in: RoundedRectangle(cornerRadius: SyncButtonMetrics.prominentCornerRadius, style: .continuous)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: SyncButtonMetrics.prominentCornerRadius, style: .continuous))
             .scaleEffect(configuration.isPressed && !reduceMotion ? 0.98 : 1)
             .opacity(isEnabled ? 1 : 0.45)
+            .animation(reduceMotion ? nil : SyncMotion.press, value: configuration.isPressed)
     }
 }
 
@@ -43,6 +76,11 @@ struct SoftCardModifier: ViewModifier {
 
 extension View {
     func softCard() -> some View { modifier(SoftCardModifier()) }
+
+    /// Applies the app's standard motion, and honors the system Reduce Motion setting.
+    func syncMotion<Value: Equatable>(_ animation: Animation = SyncMotion.stateChange, value: Value) -> some View {
+        modifier(SyncMotionAnimation(animation: animation, value: value))
+    }
 }
 
 struct AvatarView: View {

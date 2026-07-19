@@ -15,7 +15,7 @@ enum SyncFlowLayout {
     static let screenPadding: Double = 20
     static let sectionSpacing: Double = 20
     static let cardRadius: Double = 24
-    static let controlHeight: Double = 52
+    static let controlHeight: Double = SyncButtonMetrics.prominentHeight
 }
 
 struct SyncFlowBackground: View {
@@ -65,8 +65,8 @@ struct SyncFlowPrimaryButtonStyle: ButtonStyle {
             .font(.headline.bold())
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
-            .frame(minHeight: 54)
-            .padding(.horizontal)
+            .frame(minHeight: SyncButtonMetrics.prominentHeight)
+            .padding(.horizontal, SyncButtonMetrics.horizontalInset)
             .background(
                 LinearGradient(
                     colors: [SyncFlowPalette.coral, SyncFlowPalette.rose],
@@ -74,11 +74,13 @@ struct SyncFlowPrimaryButtonStyle: ButtonStyle {
                     endPoint: .trailing
                 )
                 .opacity(configuration.isPressed ? 0.78 : 1),
-                in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+                in: RoundedRectangle(cornerRadius: SyncButtonMetrics.prominentCornerRadius, style: .continuous)
             )
+            .contentShape(RoundedRectangle(cornerRadius: SyncButtonMetrics.prominentCornerRadius, style: .continuous))
             .shadow(color: SyncFlowPalette.coral.opacity(0.18), radius: 13, y: 7)
             .scaleEffect(configuration.isPressed && !reduceMotion ? 0.985 : 1)
             .opacity(isEnabled ? 1 : 0.5)
+            .animation(reduceMotion ? nil : SyncMotion.press, value: configuration.isPressed)
     }
 }
 

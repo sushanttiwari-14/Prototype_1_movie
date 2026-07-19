@@ -73,6 +73,9 @@ struct SharedMenuView: View {
             }
         }
         .sensoryFeedback(.selection, trigger: store.localCart.itemCount)
+        .syncMotion(SyncMotion.controlChange, value: viewingOther)
+        .syncMotion(value: store.localCart.itemCount)
+        .syncMotion(value: store.remoteCart.itemCount)
     }
 
     private var menuContext: some View {
@@ -188,36 +191,109 @@ struct DualCartView: View {
     let store: SyncTableStore
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 18) {
-                SectionHeader(eyebrow: "Two carts", title: "Ready when you both are", subtitle: "Separate orders, addresses and payments—linked into one shared arrival window.")
+        ZStack {
+            SyncFlowBackground()
 
-                CartCard(participant: store.localParticipant, cart: store.localCart, estimate: store.role == .host ? "42–46 min" : "44–48 min", isReady: store.localReady, editable: true) {
-                    store.setLocalReady()
-                }
-                CartCard(participant: store.remoteParticipant, cart: store.remoteCart, estimate: store.role == .host ? "44–48 min" : "42–46 min", isReady: store.remoteReady, editable: false) {}
+            ScrollView {
+                VStack(alignment: .leading, spacing: SyncFlowLayout.sectionSpacing) {
+                    CartFlowHeader()
 
-                if store.localReady && !store.remoteReady {
-                    HStack(spacing: 12) {
-                        ProgressView()
-                        Text("You’re ready. Waiting for \(store.remoteParticipant.name)…")
-                            .font(.subheadline.weight(.semibold))
+                    CartCard(
+                        participant: store.localParticipant,
+                        cart: store.localCart,
+                        estimate: store.role == .host ? "42–46 min" : "44–48 min",
+                        isReady: store.localReady,
+                        editable: true,
+                        readyAction: store.setLocalReady
+                    )
+
+                    CartCard(
+                        participant: store.remoteParticipant,
+                        cart: store.remoteCart,
+                        estimate: store.role == .host ? "44–48 min" : "42–46 min",
+                        isReady: store.remoteReady,
+                        editable: false,
+                        readyAction: {}
+                    )
+
+                    if store.localReady && !store.remoteReady {
+                        CartWaitingState(participantName: store.remoteParticipant.name)
                     }
-                    .padding()
                 }
-
-                Button {
-                    store.go(.payment)
-                } label: {
-                    Label(store.table.hostReady && store.table.partnerReady ? "Choose payment arrangement" : "Waiting for both", systemImage: "creditcard")
-                }
-                .buttonStyle(PrimaryButtonStyle())
-                .disabled(!(store.table.hostReady && store.table.partnerReady))
-                .opacity(store.table.hostReady && store.table.partnerReady ? 1 : 0.45)
+                .padding(.horizontal, SyncFlowLayout.screenPadding)
+                .padding(.top, 12)
+                .padding(.bottom, 100)
             }
-            .padding(20)
+            .scrollIndicators(.hidden)
         }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            Button {
+                store.go(.payment)
+            } label: {
+                Label(
+                    store.table.hostReady && store.table.partnerReady
+                        ? "Choose payment arrangement"
+                        : "Waiting for both",
+                    systemImage: "creditcard"
+                )
+            }
+            .buttonStyle(SyncFlowPrimaryButtonStyle())
+            .disabled(!(store.table.hostReady && store.table.partnerReady))
+            .padding(.horizontal, SyncFlowLayout.screenPadding)
+            .padding(.vertical, 12)
+            .background(.ultraThinMaterial)
+        }
+        .toolbarBackground(.hidden, for: .navigationBar)
         .sensoryFeedback(.success, trigger: store.localReady)
+        .syncMotion(value: store.localReady)
+        .syncMotion(value: store.remoteReady)
+    }
+}
+
+private struct CartFlowHeader: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("TWO CARTS")
+                .font(.system(size: 11.5, weight: .bold))
+                .tracking(1.2)
+                .foregroundStyle(SyncFlowPalette.rose)
+
+            Text("Ready when you both are")
+                .font(.system(size: 31, weight: .bold, design: .rounded))
+                .tracking(-0.8)
+                .foregroundStyle(SyncFlowPalette.ink)
+
+            Text("Separate orders, addresses, and payments—linked into one shared arrival window.")
+                .font(.system(size: 14))
+                .foregroundStyle(SyncFlowPalette.muted)
+                .lineSpacing(4)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct CartWaitingState: View {
+    let participantName: String
+
+    var body: some View {
+        HStack(spacing: 13) {
+            ProgressView()
+                .tint(SyncFlowPalette.rose)
+                .controlSize(.regular)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Your cart is ready")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(SyncFlowPalette.ink)
+                Text("Waiting for \(participantName) to confirm theirs.")
+                    .font(.system(size: 13))
+                    .foregroundStyle(SyncFlowPalette.muted)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(18)
+        .background(SyncFlowPalette.blush.opacity(0.62), in: RoundedRectangle(cornerRadius: 20))
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -230,46 +306,104 @@ struct CartCard: View {
     let readyAction: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack {
-                AvatarView(participant: participant)
-                VStack(alignment: .leading) {
-                    Text("\(participant.name)’s cart").font(.headline)
-                    Text(participant.address.line).font(.caption).foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 12) {
+                SyncCartAvatar(participant: participant)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("\(participant.name)’s cart")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .foregroundStyle(SyncFlowPalette.ink)
+                    Text(participant.address.line)
+                        .font(.system(size: 13))
+                        .foregroundStyle(SyncFlowPalette.muted)
                 }
                 Spacer()
                 if isReady {
-                    Image(systemName: "checkmark.circle.fill").font(.title2).foregroundStyle(Brand.green)
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 27, weight: .semibold))
+                        .foregroundStyle(SyncFlowPalette.success)
+                        .accessibilityLabel("Ready")
                 }
             }
-            Divider()
+
+            Divider().overlay(SyncFlowPalette.rose.opacity(0.1))
+
             ForEach(cart.items) { item in
-                HStack {
-                    Text("\(item.quantity)×").foregroundStyle(.secondary)
-                    Text(item.menuItem.name).lineLimit(1)
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text("\(item.quantity)×")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(SyncFlowPalette.muted)
+                    Text(item.menuItem.name)
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(SyncFlowPalette.ink)
+                        .lineLimit(1)
                     Spacer()
                     Text(item.subtotal.rupees)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(SyncFlowPalette.ink)
                 }
-                .font(.subheadline)
             }
+
             HStack {
                 Label(estimate, systemImage: "clock")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(SyncFlowPalette.muted)
                 Spacer()
-                Text(cart.total.rupees).font(.title3.bold())
+                Text(cart.total.rupees)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundStyle(SyncFlowPalette.ink)
             }
+
             if editable {
-                Button(isReady ? "I’m ready ✓" : "I’m Ready", action: readyAction)
-                    .buttonStyle(.borderedProminent)
-                    .tint(isReady ? Brand.green : Brand.red)
-                    .frame(maxWidth: .infinity)
+                if isReady {
+                    Label("Your cart is ready", systemImage: "checkmark.circle.fill")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(SyncFlowPalette.success)
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: SyncButtonMetrics.prominentHeight)
+                        .background(SyncFlowPalette.success.opacity(0.1), in: RoundedRectangle(cornerRadius: 14))
+                } else {
+                    Button(action: readyAction) {
+                        Label("I’m ready", systemImage: "checkmark")
+                    }
+                    .buttonStyle(SyncFlowPrimaryButtonStyle())
+                }
             } else if !isReady {
                 Label("Only \(participant.name) can edit or confirm this cart", systemImage: "lock.fill")
-                    .font(.caption).foregroundStyle(.secondary)
+                    .font(.system(size: 12.5, weight: .medium))
+                    .foregroundStyle(SyncFlowPalette.muted)
+                    .padding(.top, 2)
+            } else {
+                Label("Cart confirmed", systemImage: "checkmark.circle.fill")
+                    .font(.system(size: 12.5, weight: .bold))
+                    .foregroundStyle(SyncFlowPalette.success)
+                    .padding(.top, 2)
             }
         }
-        .softCard()
+        .syncFlowCard(cornerRadius: 26, padding: 18)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct SyncCartAvatar: View {
+    let participant: Participant
+
+    var body: some View {
+        Text(participant.initials)
+            .font(.system(size: 17, weight: .bold, design: .rounded))
+            .foregroundStyle(.white)
+            .frame(width: 52, height: 52)
+            .background(
+                LinearGradient(
+                    colors: participant.isHost
+                        ? [SyncFlowPalette.coral, SyncFlowPalette.rose]
+                        : [Color.orange.opacity(0.75), Color(red: 1, green: 0.66, blue: 0.48)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: Circle()
+            )
+            .accessibilityHidden(true)
     }
 }
 
@@ -340,6 +474,8 @@ struct CheckoutView: View {
             }
             .padding(20)
         }
+        .syncMotion(value: store.isSubmitting)
+        .syncMotion(value: store.table.orders)
     }
 
     private func paymentRow(_ participant: Participant, total: Int, method: String) -> some View {
