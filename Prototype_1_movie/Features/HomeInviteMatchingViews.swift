@@ -251,19 +251,10 @@ struct InviteView: View {
                         Text("Waiting for your tablemate…")
                             .font(.system(size: 15, weight: .bold))
                             .foregroundStyle(SyncFlowPalette.rose)
-                        Text("Don’t worry, we’ll notify you\nwhen they join!")
+                        Text("Don’t worry, we’ll notify you when they join!")
                             .font(.system(size: 13))
                             .foregroundStyle(SyncFlowPalette.muted)
                             .lineSpacing(4)
-                    }
-                    Spacer()
-                    ZStack {
-                        Image(systemName: "envelope.fill")
-                            .font(.system(size: 35))
-                            .foregroundStyle(SyncFlowPalette.rose.opacity(0.72))
-                        Image(systemName: "heart.fill")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.white)
                     }
                 }
 
