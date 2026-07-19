@@ -2,6 +2,7 @@ import SwiftUI
 
 struct InviteView: View {
     let store: SyncTableStore
+    @State private var showReceiveInvite = false
 
     var body: some View {
         ZStack {
@@ -21,6 +22,10 @@ struct InviteView: View {
         }
         .toolbarBackground(.hidden, for: .navigationBar)
         .syncMotion(value: store.bothConnected)
+        .sheet(isPresented: $showReceiveInvite) {
+            ReceiveTableInviteSheet(store: store)
+                .presentationDetents([.height(290)])
+        }
     }
 
     private var inviteHero: some View {
@@ -239,30 +244,87 @@ struct InviteView: View {
             }
             .buttonStyle(SyncFlowPrimaryButtonStyle())
         } else {
-            HStack(spacing: 15) {
-                TablemateWaitingIndicator()
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Waiting for your tablemate…")
-                        .font(.system(size: 15, weight: .bold))
+            VStack(spacing: 16) {
+                HStack(spacing: 15) {
+                    TablemateWaitingIndicator()
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Waiting for your tablemate…")
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundStyle(SyncFlowPalette.rose)
+                        Text("Don’t worry, we’ll notify you\nwhen they join!")
+                            .font(.system(size: 13))
+                            .foregroundStyle(SyncFlowPalette.muted)
+                            .lineSpacing(4)
+                    }
+                    Spacer()
+                    ZStack {
+                        Image(systemName: "envelope.fill")
+                            .font(.system(size: 35))
+                            .foregroundStyle(SyncFlowPalette.rose.opacity(0.72))
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.white)
+                    }
+                }
+
+                Button {
+                    showReceiveInvite = true
+                } label: {
+                    Label("Receive table invite", systemImage: "arrow.down.to.line.compact")
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(SyncFlowPalette.rose)
-                    Text("Don’t worry, we’ll notify you\nwhen they join!")
-                        .font(.system(size: 13))
-                        .foregroundStyle(SyncFlowPalette.muted)
-                        .lineSpacing(4)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(.white.opacity(0.82), in: RoundedRectangle(cornerRadius: 14))
                 }
-                Spacer()
-                ZStack {
-                    Image(systemName: "envelope.fill")
-                        .font(.system(size: 35))
-                        .foregroundStyle(SyncFlowPalette.rose.opacity(0.72))
-                    Image(systemName: "heart.fill")
-                        .font(.system(size: 10))
-                        .foregroundStyle(.white)
-                }
+                .buttonStyle(.plain)
+                .accessibilityHint("Enter an invite code you received from someone else")
             }
             .padding(20)
             .background(SyncFlowPalette.blush.opacity(0.55), in: RoundedRectangle(cornerRadius: 24))
         }
+    }
+}
+
+private struct ReceiveTableInviteSheet: View {
+    let store: SyncTableStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var inviteCode = ""
+    @FocusState private var inviteFieldFocused: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Receive table invite")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(SyncFlowPalette.ink)
+            Text("Enter the 4-character code shared by your tablemate.")
+                .font(.subheadline)
+                .foregroundStyle(SyncFlowPalette.muted)
+            TextField("Invite code", text: $inviteCode)
+                .focused($inviteFieldFocused)
+                .textInputAutocapitalization(.characters)
+                .autocorrectionDisabled()
+                .submitLabel(.join)
+                .onSubmit(joinTable)
+                .font(.body.weight(.medium))
+                .padding(.horizontal, 14)
+                .frame(height: 52)
+                .background(SyncFlowPalette.blush.opacity(0.7), in: RoundedRectangle(cornerRadius: 14))
+            Button("Join Table", action: joinTable)
+                .buttonStyle(SyncFlowPrimaryButtonStyle())
+                .disabled(inviteCode.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.isSubmitting)
+        }
+        .padding(24)
+    }
+
+    private func joinTable() {
+        let code = inviteCode.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !code.isEmpty else {
+            inviteFieldFocused = true
+            return
+        }
+        Task { await store.joinTable(code: code) }
+        dismiss()
     }
 }
 
